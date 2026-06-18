@@ -1,0 +1,287 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    background: #f5f0eb;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #1a1a2e;
+  }
+}
+
+@layer components {
+  /* ========== BOUTONS ========== */
+  .btn-primary {
+    background: linear-gradient(135deg, #7B1D5A 0%, #5e1644 100%);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: none;
+    cursor: pointer;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(123, 29, 90, 0.3);
+  }
+  
+  .btn-secondary {
+    background: #e8e5e0;
+    color: #1a1a2e;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-secondary:hover {
+    background: #ddd9d3;
+  }
+  
+  /* ========== CARTES ========== */
+  .card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 0.5px solid #e8e5e0;
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card:hover {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* ========== STAT CARDS ========== */
+  .stat-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 0.5px solid #e8e5e0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #7B1D5A, #C41E3A);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .stat-card:hover::before {
+    opacity: 1;
+  }
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.08);
+  }
+  .stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .stat-card .stat-icon.blue {
+    background: #e8f4fd;
+    color: #185FA5;
+  }
+  .stat-card .stat-icon.green {
+    background: #EAF3DE;
+    color: #3B6D11;
+  }
+  .stat-card .stat-icon.purple {
+    background: #fdf5fb;
+    color: #7B1D5A;
+  }
+  .stat-card .stat-icon.orange {
+    background: #faeeda;
+    color: #854F0B;
+  }
+  .stat-card .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a2e;
+    line-height: 1.2;
+  }
+  .stat-card .stat-label {
+    font-size: 13px;
+    color: #888;
+    font-weight: 500;
+  }
+  
+  /* ========== TABLEAU ========== */
+  .table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 0.5px solid #e8e5e0;
+  }
+  .table-container table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .table-container thead {
+    background: #f8f5f2;
+  }
+  .table-container th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #888;
+    border-bottom: 1px solid #e8e5e0;
+  }
+  .table-container td {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #1a1a2e;
+    border-bottom: 1px solid #f0ede8;
+  }
+  .table-container tr:hover td {
+    background: #fdf5fb;
+  }
+  .table-container tr:last-child td {
+    border-bottom: none;
+  }
+  
+  /* ========== BADGE STATUT ========== */
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .badge-nouveau {
+    background: #e8f4fd;
+    color: #185FA5;
+  }
+  .badge-contacte {
+    background: #faeeda;
+    color: #854F0B;
+  }
+  .badge-actif {
+    background: #EAF3DE;
+    color: #3B6D11;
+  }
+  .badge-strategique {
+    background: #fdf5fb;
+    color: #7B1D5A;
+  }
+  .badge-suspendu {
+    background: #faece7;
+    color: #993C1D;
+  }
+  .badge-archive {
+    background: #f1efe8;
+    color: #5F5E5A;
+  }
+  
+  /* ========== CHART PLACEHOLDER ========== */
+  .chart-placeholder {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #faf8f6;
+    border-radius: 12px;
+    border: 1px dashed #e0ddd8;
+    color: #aaa;
+    font-size: 14px;
+  }
+  
+  /* ========== INPUT ========== */
+  .input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid #e8e5e0;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    transition: all 0.2s;
+    background: white;
+  }
+  .input:focus {
+    border-color: #7B1D5A;
+    box-shadow: 0 0 0 4px rgba(123, 29, 90, 0.08);
+  }
+  
+  /* ========== LABEL ========== */
+  .label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 4px;
+  }
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.1s; }
+.delay-3 { animation-delay: 0.15s; }
+.delay-4 { animation-delay: 0.2s; }
+/* Ajouter à la fin du fichier */
+
+/* Responsive - Desktop */
+@media (min-width: 768px) {
+  .search-container {
+    display: block !important;
+  }
+  .admin-info {
+    display: block !important;
+  }
+  .close-sidebar {
+    display: none !important;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 767px) {
+  .search-container {
+    display: none !important;
+  }
+  .admin-info {
+    display: none !important;
+  }
+  .close-sidebar {
+    display: block !important;
+  }
+  
+  /* Sidebar occupe 80% de l'écran sur mobile */
+  .sidebar-mobile {
+    width: 80% !important;
+  }
+}
