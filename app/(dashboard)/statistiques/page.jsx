@@ -28,6 +28,7 @@ import {
   RefreshCw,
   Filter
 } from 'lucide-react';
+import { statsService } from '../../lib/api';
 
 export default function StatistiquesPage() {
   const [loading, setLoading] = useState(true);
@@ -48,35 +49,21 @@ export default function StatistiquesPage() {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      
       const [dashboardRes, formulesRes, typesRes, paysRes, statutsRes, evolutionRes] = await Promise.all([
-        fetch('http://localhost:5000/api/stats/dashboard', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch('http://localhost:5000/api/stats/formules', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch('http://localhost:5000/api/stats/types', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch('http://localhost:5000/api/stats/pays', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch('http://localhost:5000/api/stats/statuts', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch(`http://localhost:5000/api/stats/evolution?period=${period}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        })
+        statsService.getDashboard(),
+        statsService.getFormules(),
+        statsService.getTypes(),
+        statsService.getPays(),
+        statsService.getStatuts(),
+        statsService.getEvolution()
       ]);
 
-      const dashboardData = await dashboardRes.json();
-      const formulesData = await formulesRes.json();
-      const typesData = await typesRes.json();
-      const paysData = await paysRes.json();
-      const statutsData = await statutsRes.json();
-      const evolutionData = await evolutionRes.json();
+      const dashboardData = dashboardRes.data;
+      const formulesData = formulesRes.data;
+      const typesData = typesRes.data;
+      const paysData = paysRes.data;
+      const statutsData = statutsRes.data;
+      const evolutionData = evolutionRes.data;
 
       setStats({
         dashboard: dashboardData.success ? dashboardData.data : null,

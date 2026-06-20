@@ -16,6 +16,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import { statsService, partnerService } from '../../lib/api';
 
 export default function DashboardPage() {
   const [stats, setStats] = useState(null);
@@ -27,22 +28,16 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token');
-        
         // Récupérer les stats
-        const statsResponse = await fetch('http://localhost:5000/api/stats/dashboard', {
-          headers: { 'Authorization': `Bearer ${token}` },
-        });
-        const statsData = await statsResponse.json();
+        const statsResponse = await statsService.getDashboard();
+        const statsData = statsResponse.data;
         if (statsData.success) {
           setStats(statsData.data);
         }
 
         // Récupérer les derniers partenaires
-        const partnersResponse = await fetch('http://localhost:5000/api/partenaires?limit=5', {
-          headers: { 'Authorization': `Bearer ${token}` },
-        });
-        const partnersData = await partnersResponse.json();
+        const partnersResponse = await partnerService.getAll({ limit: 5 });
+        const partnersData = partnersResponse.data;
         if (partnersData.success) {
           setRecentPartners(partnersData.data || []);
         }

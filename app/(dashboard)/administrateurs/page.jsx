@@ -13,6 +13,7 @@ import {
   Check,
   UserPlus
 } from 'lucide-react';
+import { adminService } from '../../lib/api';
 
 export default function AdministrateursPage() {
   const [admins, setAdmins] = useState([]);
@@ -35,11 +36,8 @@ export default function AdministrateursPage() {
   const fetchAdmins = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/admin', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await response.json();
+      const response = await adminService.getAll();
+      const data = response.data;
       if (data.success) {
         setAdmins(data.data || []);
       }
@@ -55,12 +53,6 @@ export default function AdministrateursPage() {
     setFormError('');
 
     try {
-      const token = localStorage.getItem('token');
-      const url = editingAdmin 
-        ? `http://localhost:5000/api/admin/${editingAdmin.id}`
-        : 'http://localhost:5000/api/auth/admins';
-      const method = editingAdmin ? 'PUT' : 'POST';
-
       const payload = { ...formData };
       if (!editingAdmin) {
         delete payload.confirmPassword;
@@ -68,15 +60,11 @@ export default function AdministrateursPage() {
         delete payload.password;
       }
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
-      const data = await response.json();
+      const response = editingAdmin
+        ? await adminService.update(editingAdmin.id, payload)
+        : await adminService.create(payload);
+
+      const data = response.data;
 
       if (data.success) {
         setShowModal(false);
@@ -93,12 +81,8 @@ export default function AdministrateursPage() {
 
   const handleToggleAdmin = async (id, currentStatus) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/admin/${id}/toggle`, {
-        method: 'PATCH',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await response.json();
+      const response = await adminService.toggle(id);
+      const data = response.data;
       if (data.success) {
         fetchAdmins();
       }
@@ -111,12 +95,8 @@ export default function AdministrateursPage() {
     if (!confirm(`Voulez-vous vraiment supprimer l'administrateur ${nom} ?`)) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/admin/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await response.json();
+      const response = await adminService.delete(id);
+      const data = response.data;
       if (data.success) {
         fetchAdmins();
       }

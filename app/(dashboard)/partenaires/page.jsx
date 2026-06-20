@@ -15,6 +15,7 @@ import {
   ChevronRight,
   X
 } from 'lucide-react';
+import { partnerService, statsService } from '../../lib/api';
 
 export default function PartenairesPage() {
   const router = useRouter();
@@ -50,20 +51,17 @@ export default function PartenairesPage() {
 
   const fetchFilterStats = async () => {
     try {
-      const token = localStorage.getItem('token');
-      
-      // Récupérer les stats des filtres
       const [typesRes, formulesRes, statutsRes, paysRes] = await Promise.all([
-        fetch('http://localhost:5000/api/stats/types', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/stats/formules', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/stats/statuts', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch('http://localhost:5000/api/stats/pays', { headers: { 'Authorization': `Bearer ${token}` } })
+        statsService.getTypes(),
+        statsService.getFormules(),
+        statsService.getStatuts(),
+        statsService.getPays()
       ]);
 
-      const typesData = await typesRes.json();
-      const formulesData = await formulesRes.json();
-      const statutsData = await statutsRes.json();
-      const paysData = await paysRes.json();
+      const typesData = typesRes.data;
+      const formulesData = formulesRes.data;
+      const statutsData = statutsRes.data;
+      const paysData = paysRes.data;
 
       setFilterStats({
         types: typesData.success ? typesData.data : [],
@@ -79,18 +77,15 @@ export default function PartenairesPage() {
   const fetchPartenaires = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const params = new URLSearchParams({
+      const params = {
         page: pagination.page,
         limit: pagination.limit,
         search: searchTerm,
         ...filters
-      });
+      };
 
-      const response = await fetch(`http://localhost:5000/api/partenaires?${params}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await response.json();
+      const response = await partnerService.getAll(params);
+      const data = response.data;
       
       if (data.success) {
         setPartenaires(data.data || []);
@@ -133,12 +128,8 @@ export default function PartenairesPage() {
     if (!confirm(`Voulez-vous vraiment supprimer le partenaire ${nom} ?`)) return;
     
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/partenaires/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await response.json();
+      const response = await partnerService.delete(id);
+      const data = response.data;
       if (data.success) {
         fetchPartenaires();
       }

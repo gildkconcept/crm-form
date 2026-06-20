@@ -11,6 +11,7 @@ import {
   Check,
   Loader2
 } from 'lucide-react';
+import api from '../../lib/api';
 
 export default function ExportPage() {
   const [exportType, setExportType] = useState('csv');
@@ -26,24 +27,20 @@ export default function ExportPage() {
   const handleExport = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const params = new URLSearchParams(filters);
-      
-      const response = await fetch(`http://localhost:5000/api/export/${exportType}?${params}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const response = await api.get(`/export/${exportType}`, {
+        params: filters,
+        responseType: 'blob'
       });
-      
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `partenaires_${new Date().toISOString().slice(0,10)}.${exportType === 'csv' ? 'csv' : exportType === 'excel' ? 'xlsx' : 'pdf'}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      }
+
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `partenaires_${new Date().toISOString().slice(0,10)}.${exportType === 'csv' ? 'csv' : exportType === 'excel' ? 'xlsx' : 'pdf'}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Erreur export:', error);
     } finally {

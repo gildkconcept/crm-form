@@ -19,6 +19,7 @@ import {
   History,
   FileText
 } from 'lucide-react';
+import { partnerService } from '../../../lib/api';
 
 export default function PartenaireDetailPage() {
   const params = useParams();
@@ -38,22 +39,15 @@ export default function PartenaireDetailPage() {
   const fetchPartenaire = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
       const [partenaireRes, historiqueRes, notesRes] = await Promise.all([
-        fetch(`http://localhost:5000/api/partenaires/${params.id}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch(`http://localhost:5000/api/partenaires/${params.id}/historique`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }),
-        fetch(`http://localhost:5000/api/partenaires/${params.id}/notes`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        })
+        partnerService.getById(params.id),
+        partnerService.getHistorique(params.id),
+        partnerService.getNotes(params.id)
       ]);
 
-      const partenaireData = await partenaireRes.json();
-      const historiqueData = await historiqueRes.json();
-      const notesData = await notesRes.json();
+      const partenaireData = partenaireRes.data;
+      const historiqueData = historiqueRes.data;
+      const notesData = notesRes.data;
 
       if (partenaireData.success) setPartenaire(partenaireData.data);
       if (historiqueData.success) setHistorique(historiqueData.data || []);
@@ -69,16 +63,8 @@ export default function PartenaireDetailPage() {
     if (!newNote.trim()) return;
     
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/partenaires/${params.id}/notes`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ contenu: newNote })
-      });
-      const data = await response.json();
+      const response = await partnerService.addNote(params.id, newNote);
+      const data = response.data;
       if (data.success) {
         setNotes([data.data, ...notes]);
         setNewNote('');
@@ -90,16 +76,8 @@ export default function PartenaireDetailPage() {
 
   const handleStatusChange = async (newStatus) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/partenaires/${params.id}/statut`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ statut: newStatus })
-      });
-      const data = await response.json();
+      const response = await partnerService.updateStatus(params.id, newStatus);
+      const data = response.data;
       if (data.success) {
         setPartenaire(data.data);
         fetchPartenaire(); // Rafraîchir pour l'historique
@@ -113,12 +91,8 @@ export default function PartenaireDetailPage() {
     if (!confirm('Voulez-vous vraiment supprimer ce partenaire ?')) return;
     
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/partenaires/${params.id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await response.json();
+      const response = await partnerService.delete(params.id);
+      const data = response.data;
       if (data.success) {
         router.push('/partenaires');
       }

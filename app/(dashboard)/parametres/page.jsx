@@ -13,6 +13,7 @@ import {
   Check,
   AlertCircle
 } from 'lucide-react';
+import { adminService, authService } from '../../lib/api';
 
 export default function ParametresPage() {
   const [activeTab, setActiveTab] = useState('profil');
@@ -48,11 +49,8 @@ export default function ParametresPage() {
 
   const fetchProfile = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/admin/profile/me', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await response.json();
+      const response = await adminService.getProfile();
+      const data = response.data;
       if (data.success) {
         setProfile({
           nom: data.data.nom || '',
@@ -72,16 +70,8 @@ export default function ParametresPage() {
     setError('');
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/admin/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ nom: profile.nom, email: profile.email })
-      });
-      const data = await response.json();
+      const response = await adminService.update('profile', { nom: profile.nom, email: profile.email });
+      const data = response.data;
       if (data.success) {
         setSuccess('Profil mis à jour avec succès !');
         // Mettre à jour le localStorage
@@ -118,19 +108,10 @@ export default function ParametresPage() {
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/change-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          currentPassword: passwordData.currentPassword,
-          newPassword: passwordData.newPassword
-        })
-      });
-      const data = await response.json();
+      const response = await authService.changePassword
+        ? authService.changePassword(passwordData.currentPassword, passwordData.newPassword)
+        : null;
+      const data = response.data;
       if (data.success) {
         setSuccess('Mot de passe changé avec succès !');
         setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
